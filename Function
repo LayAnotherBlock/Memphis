@@ -1,0 +1,145 @@
+fwrite = function(path, text)
+ local file = assert(io.open(path, "w"))
+ file:write(text)
+ file:close()
+end
+
+fwriteFromTable = function(path, t)
+ local text = ""
+ for _, line in pairs(t) do
+ text = text..line.."\n"
+end
+fwrite(path, text)
+end
+
+appbar = function(Color, TextColor)
+ term.setBackgroundColor(Color)
+ term.setTextColor(TextColor)
+ term.setCursorPos(1,1)
+ term.clearLine()
+ write(" [Memphis] | [Apps] [Settings]")
+end
+
+getTable = function(path)
+ if fs.exists(path) then
+  local file = io.open(path, "r")
+  local lines = {}
+  local i = 1
+  local line = file:read("*l")
+  while line ~= nil do
+   lines[i] = line
+   line = file:read("*l")
+   i = i + 1
+  end
+ file:close()
+ return lines
+ end
+return {}
+end
+
+replaceLine = function(path, n, text)
+ local lines = getTable(path)
+ lines[n] = text
+ fwriteFromTable(path, lines)
+end
+
+getBg = function(path, background, text)
+ term.setBackgroundColor(background)
+ term.setTextColor(text)
+ term.clear()
+ paintutils.drawImage(paintutils.loadImage(path), 1,1)
+end
+
+drawMenu1 = function(color, textcol)
+ term.setTextColor(textcol)
+ term.setBackgroundColor(color)
+ term.setCursorPos(2, 2)
+ print("          ")
+ term.setCursorPos(2, 3)
+ print(" Shutdown ")
+ term.setCursorPos(2, 4)
+ print(" Reboot   ")
+ term.setCursorPos(2, 5)
+ print(" Terminal ")
+ term.setCursorPos(2, 6)
+ print("          ")
+end
+
+shush = function(titleColor, titleText, windowColor, windowText, buttonColor, buttonText)
+ term.setTextColor(titleText)
+ term.setBackgroundColor(titleColor)
+ term.setCursorPos(20, 5)
+ write("Shutdown                 ")
+ term.setBackgroundColor(colors.red)
+ term.setCursorPos(45, 5)
+ write("X")
+ term.setCursorPos(20, 6)
+ term.setBackgroundColor(windowColor)
+ term.setTextColor(windowText)
+ write("                          ")
+ term.setCursorPos(20, 7)
+ write(" Are you sure you want to ")
+ term.setCursorPos(20, 8)
+ write(" shutdown?                ")
+ term.setCursorPos(20, 9)
+ write("  ")
+ term.setCursorPos(22, 9)
+ term.setBackgroundColor(buttonColor)
+ term.setTextColor(buttonText)
+ write("[ Yes ]")
+ term.setCursorPos(38, 9)
+ write("[ No ]")
+ term.setCursorPos(29, 9)
+ term.setTextColor(windowText)
+ term.setBackgroundColor(windowColor)
+ write("         ")
+ term.setCursorPos(44, 9)
+ write("  ")
+ term.setCursorPos(20, 10)
+ write("                          ")
+end
+
+submitBug = function(windowTitleCol, windowTitleText, windowCol, windowText)
+ term.setCursorPos(10, 5)
+ term.setBackgroundColor(windowTitleCol)
+ term.setTextColor(windowTitleText)
+ write("Submit Bug Report     ")
+ term.setCursorPos(32, 5)
+ term.setBackgroundColor(colors.red)
+ write("X")
+ term.setCursorPos(10, 6)
+ term.setBackgroundColor(windowCol)
+ term.setTextColor(windowText)
+ write(" Please input the     ")
+ term.setCursorPos(10, 7)
+ write(" following: Name:     ")
+ term.setCursorPos(10, 8)
+ name = read()
+ term.setCursorPos(10, 9)
+ write(" Bug Report Info:     ")
+ term.setCursorPos(10, 10)
+ write("                      ")
+ term.setCursorPos(10, 11)
+ write("                      ")
+ term.setCursorPos(10, 12)
+ write("                      ")
+ term.setCursorPos(10, 13)
+ write("                      ")
+ term.setCursorPos(11, 10)
+ term.setBackgroundColor(colors.white)
+ write("                    ")
+ term.setCursorPos(11, 11)
+ write("                    ")
+ term.setCursorPos(11, 12)
+ write("                    ")
+ term.setCursorPos(11, 10)
+ ln1 = read()
+ term.setCursorPos(11, 11)
+ ln2 = read()
+ term.setCursorPos(11, 12)
+ ln3 = read()
+ message = "Report: "..name.."\n".."Details: ".."\n"..ln1.."\n"..ln2.."\n"..ln3
+ http.post(
+  "http://memphis.webege.com/public_html/ccmembugman.php?message="..tostring(message)
+ )
+end
